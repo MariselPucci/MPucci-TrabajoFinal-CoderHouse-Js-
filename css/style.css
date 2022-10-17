@@ -1,0 +1,290 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Gudea", sans-serif;
+}
+
+body header {
+  background-color: #D5D8DC;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  box-shadow: 0 7px 8px -3px grey;
+  position: fixed;
+  width: 100%;
+  margin-top: -10px;
+  z-index: 99;
+}
+body header .header-section {
+  display: flex;
+  justify-content: space-between;
+  margin: auto;
+  align-items: center;
+  position: relative;
+}
+body header .header-section div {
+  position: relative;
+}
+body header .header-section p {
+  position: absolute;
+  top: -24px;
+  right: -8px;
+  background-color: #fff;
+  padding: 1px 6px;
+  border-radius: 50%;
+  color: #f4004f;
+  font-weight: 700;
+  font-family: system-ui;
+  line-height: 18px;
+}
+body header .header-section #logo {
+  font-size: 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-top: 20px;
+  cursor: pointer;
+}
+body header .header-section .cart {
+  width: 39px;
+  height: 38px;
+}
+body main #contenedor-categorias {
+  padding-top: 150px;
+  text-align: center;
+}
+body main #contenedor-categorias .titulo-categorias {
+  text-transform: uppercase;
+  font-size: 1.3em;
+  letter-spacing: 4px;
+}
+body main #contenedor-categorias .btn-categorias {
+  background-color: #f4004f;
+  padding: 15px 20px;
+  letter-spacing: 4px;
+  overflow-y: hidden;
+  transition: 0.2s;
+  border: none;
+}
+body main #contenedor-productos .card {
+  box-shadow: 0 7px 8px -3px grey;
+  margin: 10px;
+  border: 1px solid #000;
+  display: flex;
+}
+body main #contenedor-productos .card .card-text {
+  text-align: center;
+  font-size: 1.1em;
+}
+body main #contenedor-productos .card .card-footer {
+  text-align: center;
+}
+body main #contenedor-productos .card .card-footer .btn {
+  background-color: #444;
+  border: none;
+}
+body main #contenedor-productos .card .card-footer .btn:hover {
+  background-color: #000;
+  border: none;
+  color: #fff;
+}
+body main #contenedor-carrito {
+  text-align: center;
+}
+body main #contenedor-carrito .container.p-3.d-flex.justify-content-between {
+  background-color: #D5D8DC;
+}
+
+.card-products {
+  position: absolute !important;
+  top: 82px;
+  right: -2px;
+  background: #fff;
+  padding: 5px 18px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  display: none;
+  min-width: 320px;
+  text-align: center;
+}
+.card-products a img {
+  width: 15px;
+}
+.card-products p.cerrar-btn {
+  top: 4px;
+  right: 6px;
+  cursor: pointer;
+  color: #000;
+}
+
+p.cerrar-btn {
+  top: 4px;
+  right: 6px;
+  cursor: pointer;
+  color: #000;
+}
+
+.cart:hover {
+  margin-bottom: 16px;
+  transition-duration: 0.5s;
+}
+
+.productsMostrar {
+  display: block;
+}
+
+#boton-iniciar-compra {
+  background-color: #f9d102;
+  letter-spacing: 4px;
+  overflow-y: hidden;
+  transition: 0.2s;
+  border: none;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.item span {
+  background-color: red;
+  padding: 0px 5px;
+  border-radius: 50%;
+  color: #fff;
+  font-family: system-ui;
+  cursor: pointer;
+}
+
+.item img {
+  width: 50px;
+  padding-bottom: 15px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  border-bottom: solid 2px red;
+}
+
+.item .item-content {
+  margin: 0 19px;
+  width: 201px;
+}
+
+.item .item-content h5 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 400;
+  font-family: system-ui;
+}
+
+.item .item-content h6 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: system-ui;
+}
+
+.card-products .item span {
+  background-color: red;
+  padding: 0px 5px;
+  border-radius: 50%;
+  color: #fff;
+  font-family: system-ui;
+  cursor: pointer;
+}
+
+.card-products h3 {
+  margin-bottom: 0;
+}
+
+.item .item-content h5.cart-price {
+  font-weight: 700;
+}
+
+.finalizarCompra {
+  background-color: #fff;
+  padding: 10px;
+}
+.finalizarCompra .productos-finalizarCompra {
+  margin-top: 10px;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra {
+  padding: 22px;
+  background-color: #C4C4C4;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra img {
+  width: 54px;
+  margin-bottom: 1rem;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra label {
+  margin-bottom: 2px;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra input {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+  background: #C4C4C4;
+  margin-bottom: 1rem;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra input:focus {
+  outline: none;
+  border-bottom: 1px solid #000;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra .datos-left-tarjeta {
+  display: flex;
+  flex-direction: column;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra .datos-left-tarjeta input {
+  font-size: 22px;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra .datos-left-tarjeta input:last-child {
+  width: 15%;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra .datos-right-tarjeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.finalizarCompra .datosPersonales-finalizarCompra .tarjeta-finalizarCompra .datos-right-tarjeta input {
+  width: 80%;
+}
+
+.datosPersonales-finalizarCompra [required]:valid {
+  border: 2px solid #40a483;
+}
+
+.datosPersonales-finalizarCompra [required]:invalid {
+  border: 2px solid #f4004f;
+}
+
+/* ===================================================================================== */
+/* estilos footer*/
+footer {
+  margin-top: 50px;
+  background: #D5D8DC;
+  padding: 20px 0;
+}
+footer .footer-container {
+  margin: auto;
+  margin-top: 20px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  justify-content: center;
+}
+footer .container .footer-container .left-col {
+  justify-content: center;
+}
+footer .container .footer-container .navbar-brand.footer {
+  font-size: 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-left: 40px;
+}
+footer .container .footer-container .redes {
+  margin: 20px 0;
+}
+footer .container .footer-container .redes a {
+  margin-right: 25px;
+}
+footer .container .footer-container .rights-text {
+  color: #000;
+}/*# sourceMappingURL=style.css.map */
