@@ -32,6 +32,7 @@ function arrayFiltrarProductoPorCategoria (nombreCategoria) {
   return arrayObjetosCategoria;
 }
 
+//Funcion para pintar productos a mostrar en scope global. 
 function pintarProductos(arrayProd,carrito) {
   contenedorProductos.innerHTML = "";
   arrayProd.forEach((producto) => {
@@ -70,7 +71,7 @@ function pintarProductos(arrayProd,carrito) {
                                   let idProducto = pedido.producto.id
                                   let indexOfPedido = carrito.pedidos.map(e => e.producto.id).indexOf(idProducto)
                                   let {pedidos, productosStock, contadorDelCarrito} = carrito
-                                  const disponibilidad = indexOfPedido != -1 && productosStock.disponibilidadStock(idProducto, pedidos[indexOfPedido].cantidad)
+                                  const disponibilidad = indexOfPedido != -1 && productosStock.hayDisponibilidadStock(idProducto, pedidos[indexOfPedido].cantidad)
       
                                   if (disponibilidad){
                                     mostrarMensajeConfirmacion("Producto agregado correctamente", "#40a483")
@@ -100,6 +101,7 @@ function mostrarMensajeConfirmacion(mensaje, color) {
   }).showToast();
 }
 
+//Funcion que desplega menu del carrito
 function mostrarCard(){
   let productsId = document.getElementById("products-id")
   let iconoCarrito = document.getElementById("icono-card")
@@ -108,37 +110,9 @@ function mostrarCard(){
   cerrarCard.onclick = () => {productsId.classList.remove("productsMostrar")}
 }
 
-async function main() {
-  try {
-    Swal.fire({
-      title: 'Bienvenid@s!',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      willOpen: () => {
-          Swal.showLoading()
-      },
-    });
-
-    const response = await fetch(
-      "https://633e375c83f50e9ba3ad63d5.mockapi.io/api/v1/productos"
-    );
-   
-    const data = await response.json(); 
-    swal.close()
-    ARRAYPRODUCTOS = [...data];
-    let productosStock = new ProductosStock()
-    let carrito = new Carrito(productosStock)
-    inicializarElementos();
-    inicializarEventos(carrito);
-    carrito.actualizarCarrito()
-    pintarProductos(ARRAYPRODUCTOS,carrito)
-    mostrarCard()
-  } catch (error) {
-    console.log(error);
-    } 
-}
-
-async function finalizarYdisminuirStockDelServer(formulario,modalCarritoCompra){
+//Funcion async a ser llamada dentro de la clase ModalCarritoCompra. Procesa la 
+//finalizacion de la compra y actualiza la cantidad de stock en el server remoto.
+async function procesarFinalizacionCompra(formulario,modalCarritoCompra){
   try{
     Swal.fire({
       title: 'Por favor aguarde un momento',
@@ -151,14 +125,14 @@ async function finalizarYdisminuirStockDelServer(formulario,modalCarritoCompra){
     });
     
    for (let pedido of modalCarritoCompra.carrito.pedidos){ 
-    let {producto: {id,nombre,cantidad,precio,img,categoria,detalle}} = pedido
-    let indexOfProducto = ARRAYPRODUCTOS.map(e => e.id).indexOf(id)
-    console.log('cantidad a eliminar:',pedido.cantidad)
+    let {producto: {id,nombre,precio,img,categoria,detalle}} = pedido
+    //let indexOfProducto = ARRAYPRODUCTOS.map(e => e.id).indexOf(id)
+    //console.log('cantidad a eliminar:',pedido.cantidad)
      const response1 = await fetch(
        `https://633e375c83f50e9ba3ad63d5.mockapi.io/api/v1/productos/${id}` 
       )
      const data =  await response1.json()
-      console.log('response1-data',data)
+      //console.log('response1-data',data)
      
      let cantidadNeta = data.cantidad - pedido.cantidad
      if (cantidadNeta<0 || data.cantidad===0){
@@ -205,15 +179,48 @@ async function finalizarYdisminuirStockDelServer(formulario,modalCarritoCompra){
   }
 }
 
+
+//Funcion main
+async function main() {
+  try {
+    Swal.fire({
+      title: 'Bienvenid@s!',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      willOpen: () => {
+          Swal.showLoading()
+      },
+    });
+
+    const response = await fetch(
+      "https://633e375c83f50e9ba3ad63d5.mockapi.io/api/v1/productos"
+    );
+   
+    const data = await response.json(); 
+    swal.close()
+    ARRAYPRODUCTOS = [...data];
+    let productosStock = new ProductosStock()
+    let carrito = new Carrito(productosStock)
+    inicializarElementos();
+    inicializarEventos(carrito);
+    carrito.actualizarCarrito()
+    pintarProductos(ARRAYPRODUCTOS,carrito)
+    mostrarCard()
+  } catch (error) {
+    console.log(error);
+    } 
+}
+
 //=========================================================================================================================
 // Clases
 
-// Clase que maneja el stock disponible - control de stock
+// Clase que chequea el stock disponible - control de stock
 class ProductosStock {
   constructor() {
     this.productosTotales = ARRAYPRODUCTOS
   }
 
+  //Verifica existencia de stock (>0)
   verificarStock(id) {
     let checkado = this.productosTotales.some(function(e){
       if (e.id==id){
@@ -226,7 +233,9 @@ class ProductosStock {
     return checkado
   }
 
-  disponibilidadStock(id,cantidad) {
+  //Chequea si hay disponibilidad de stock de acuerdo a la cantidad
+  //requerida en el pedido. 
+  hayDisponibilidadStock(id,cantidad) {
     let indexOfProducto = this.productosTotales.map(e => e.id).indexOf(id)
     const cantidadDisponible = this.productosTotales[indexOfProducto]?.cantidad
     if (cantidadDisponible===undefined){
@@ -259,7 +268,7 @@ class ProductosStock {
   }
 } //Fin clase ProductosStock
 
-// Arma el pedido que despues va a ser pusheado al carrito
+// clase Pedido. Arma el pedido (producto + cantidad solicitada) que despues va a ser pusheado al carrito
 class Pedido {
   constructor(producto,cantidad) {
       this.producto = producto;
@@ -269,9 +278,10 @@ class Pedido {
       let montoPedido = this.cantidad * this.producto.precio;
       return parseFloat(montoPedido.toFixed(2));
     }
-}
+}//FinClase Pedido
 
-//Clase que contiene un modal con formulario para realizar el checkout de la cmompra
+//Clase que contiene un modal con formulario para realizar el checkout de la compra.
+//El parametro del constructor (i.e. carrito) requiere una instancia de la clase Carrito.
 class ModalCarritoCompra{
   constructor(carrito){
     this.carrito = carrito
@@ -281,6 +291,8 @@ class ModalCarritoCompra{
     this.infoContacto = {}
   }
 
+  //Metodo para guardar informacion de contacto. Este metodo es llamado
+  //en el metodo comprar() que pasa la informacion a la funcion procesarFinalizacionCompra(). 
   guardarInformacionDeContacto(){
     let apellidoNombre = document.getElementById("nombre")
     let email = document.getElementById("email")
@@ -325,6 +337,9 @@ class ModalCarritoCompra{
     botonCerrarModal.onclick = () => this.modal.hide()
   }
 
+  //Metodo comprar. Pregunta al usuario si desea confirmar su compra.
+  // En caso de confirmacion pasa informacion de la instancia del modal
+  // para ser usada por procesarFinalizacionCompra(). 
   comprar(){
     let formularioCompra = document.getElementById("formularioComprarCarrito")
     formularioCompra.onsubmit = (event) => {
@@ -338,7 +353,7 @@ class ModalCarritoCompra{
         cancelButtonText: 'Cancelar',
       }).then((result) => {
         if (result.isConfirmed) {
-          finalizarYdisminuirStockDelServer(formularioCompra,this)
+          procesarFinalizacionCompra(formularioCompra,this)
         }
       })
     }
@@ -346,7 +361,12 @@ class ModalCarritoCompra{
 }//Finclase ModalCarritoCompra
 
 
-//Clase que tiene metodos para llenar el carrito, actualizar las cantidades, borra productos del pedido
+//Clase que tiene metodos para llenar el carrito, actualizar las cantidades, quita pedidos, etc.
+// Su constructor recibe una instancia de la clase ProductosStock.
+// La instanciacion de esta clase ademas chequea si habian pedidos que quedaron precargados en el 
+//carrito. Si es asi los trae del local storage para que el usuario pueda continuar
+//con su compra. Esto es asi porque si el usuario refresca la pagina, la informacion del carrito
+//se mantiene.
 class Carrito{
   constructor(productosStock){
     if (localStorage.length != 0){
@@ -355,11 +375,13 @@ class Carrito{
       console.log(listaDePedidosJSON)
       let listaDePedidos = JSON.parse(listaDePedidosJSON)
       let pedidos =[]
-      //Convierto la info de los pedidos en instancias de Pedido:
+      //Convierto la info de los pedidos parseados en instancias de la clase Pedido:
       for (let pedido of listaDePedidos){
         const {producto, cantidad} =  pedido
         pedidos.push(new Pedido(producto,cantidad))
       }
+      //Todos los pedidos cargados por el usuario estan en 
+      //esta lista llamada pedidos:
       this.pedidos = pedidos
     } 
     else{
@@ -370,6 +392,8 @@ class Carrito{
   }
 
 
+  //Este metodo actualiza el carrito. Es decir, pinta el carrito nuevamente y
+  //ademas guarda la info en el local storage.
   actualizarCarrito() {    
     let pedidosJSON = JSON.stringify(this.pedidos);
     localStorage.setItem("pedidos", pedidosJSON);
@@ -378,6 +402,7 @@ class Carrito{
   }
 
 
+  //Elimina pedido del carrito.
   eliminar(pedido){
     let indexOfPedido = this.pedidos.map(e => e.producto.id).indexOf(pedido.producto.id)
     indexOfPedido==-1 ? this.pedidos.splice(indexOfPedido,1) : this.pedidos[indexOfPedido].cantidad -= pedido.cantidad;
@@ -385,11 +410,12 @@ class Carrito{
   }
 
 
+  //Agrega un pedido al carrito.
   agregar(pedido){
-    //Verifico si hay stock y procede a agregar al carrito.
+    //Verifico disponibilidad de stock y procedo a agregar al carrito.
     let {producto, cantidad} = pedido  
     let indexOfPedido = this.pedidos.map(e => e.producto.id).indexOf(producto.id)
-    const disponibilidadStock = this.productosStock.disponibilidadStock(producto.id, cantidad)
+    const disponibilidadStock = this.productosStock.hayDisponibilidadStock(producto.id, cantidad)
 
     if (disponibilidadStock){
       indexOfPedido ==-1 ? this.pedidos.push(pedido) : this.pedidos[indexOfPedido].cantidad += cantidad;
@@ -402,6 +428,7 @@ class Carrito{
     }
   }
 
+  //Remueve un pedido del menu desplegable del carrito.
   borrarOnClick(id){
     let indiceBorrar = this.pedidos.findIndex(
       (pedido) => Number(pedido.producto.id) === Number(id)
@@ -417,6 +444,7 @@ class Carrito{
     this.actualizarCarrito();
   }
 
+  //Vacia carrito y limpia el local storage.
   vaciarCarrito(){
     this.pedidos=[]
     let carritoContador = document.getElementById(`carrito-contador`)
@@ -426,6 +454,7 @@ class Carrito{
     this.actualizarCarrito()
   }
 
+  //Monto total del carrito.
   totalCarrito () {
     let total = 0;
     for (let pedido of this.pedidos) {
@@ -434,7 +463,7 @@ class Carrito{
     return total;
   }
 
-  //Muestra los pedidos del carrito
+  //Muestra los pedidos del menu desplegable carrito
   pintarCarrito(){
     let carritoContador = document.getElementById("carrito-contador")
     carritoContador.innerHTML = this.contadorDelCarrito
@@ -495,6 +524,7 @@ class Carrito{
 
   finalizarCompraCarrito () {
     // Disminuye la cantidad de productos comprados en el stock disponible
+    // y vacia el carrito.
     for (let pedido of this.pedidos) {
       let {producto: {id}, cantidad} = pedido
       this.productosStock.disminuirStock(id, cantidad)
