@@ -126,19 +126,16 @@ async function procesarFinalizacionCompra(formulario,modalCarritoCompra){
     
    for (let pedido of modalCarritoCompra.carrito.pedidos){ 
     let {producto: {id,nombre,precio,img,categoria,detalle}} = pedido
-    //let indexOfProducto = ARRAYPRODUCTOS.map(e => e.id).indexOf(id)
-    //console.log('cantidad a eliminar:',pedido.cantidad)
-     const response1 = await fetch(
+    const response1 = await fetch(
        `https://633e375c83f50e9ba3ad63d5.mockapi.io/api/v1/productos/${id}` 
       )
-     const data =  await response1.json()
-      //console.log('response1-data',data)
+    const data =  await response1.json()
      
-     let cantidadNeta = data.cantidad - pedido.cantidad
-     if (cantidadNeta<0 || data.cantidad===0){
+    let cantidadNeta = data.cantidad - pedido.cantidad
+    if (cantidadNeta<0 || data.cantidad===0){
       let msg = 'No hay suficiente stock'
       throw new Error(msg)
-     } 
+    } 
      
     const response2 = await fetch(
       `https://633e375c83f50e9ba3ad63d5.mockapi.io/api/v1/productos/${id}`,
@@ -268,7 +265,7 @@ class ProductosStock {
   }
 } //Fin clase ProductosStock
 
-// clase Pedido. Arma el pedido (producto + cantidad solicitada) que despues va a ser pusheado al carrito
+// Clase Pedido. Arma el pedido (producto + cantidad solicitada) que despues va a ser pusheado al carrito
 class Pedido {
   constructor(producto,cantidad) {
       this.producto = producto;
@@ -393,7 +390,7 @@ class Carrito{
 
 
   //Este metodo actualiza el carrito. Es decir, pinta el carrito nuevamente y
-  //ademas guarda la info en el local storage.
+  //ademas guarda los pedidos en el local storage.
   actualizarCarrito() {    
     let pedidosJSON = JSON.stringify(this.pedidos);
     localStorage.setItem("pedidos", pedidosJSON);
